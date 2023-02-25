@@ -27,29 +27,31 @@ class VirtualMachineExt(runtime.VirtualMachine):
     def __init__(self, rpc, system, stop):
         super().__init__(rpc, system, stop, None)
 
-    async def move_cm_async(self, direction: str, cm: float):
+    async def move_cm_async(self, direction: str, cm: float) -> None:
         await movement.move_degrees(
             self,
             (cm / self.store.move_calibration()) * 360,
             movement.from_direction(direction, self.store.move_speed()),
         )
 
-    async def move_degrees_async(self, direction: str, degrees: float):
+    async def move_degrees_async(self, direction: str, degrees: float) -> None:
         await movement.move_degrees(
             self,
             degrees,
             movement.from_direction(direction, self.store.move_speed()),
         )
 
-    def start_move_direction(self, direction: str):
-        movement.move_start(self, movement.from_direction(direction, self.store.move_speed()))
+    def start_move_direction(self, direction: str) -> None:
+        movement.move_start(
+            self, movement.from_direction(direction, self.store.move_speed())
+        )
 
-    def stop_movement(self):
+    def stop_movement(self) -> None:
         movement.move_stop(self)
 
     async def run_motor_to_position(
         self, motor_port: str, direction: str, position: float
-    ):
+    ) -> None:
         speed = abs(self.store.motor_speed(motor_port))
         (acceleration, deceleration) = self.store.motor_acceleration(motor_port)
         stall = self.store.motor_stall(motor_port)
@@ -67,11 +69,11 @@ class VirtualMachineExt(runtime.VirtualMachine):
             )
         )
 
-    def get_color(self, sensor_port: str):
+    def get_color(self, sensor_port: str) -> int:
         result = sensors.get_sensor_value(sensor_port, 0, LedColor.Nothing, (61,))
         return LedColor.Nothing if result is None else result
 
-    def get_proximity(self, sensor_port: str):
+    def get_proximity(self, sensor_port: str) -> float:
         max_dist = 200
         result = sensors.get_sensor_value(sensor_port, 0, max_dist, (62,))
         return max_dist if result is None else result
@@ -81,20 +83,20 @@ class Robot:
     def __init__(self, vm: VirtualMachineExt):
         self.vm = vm
 
-    def move_start_forward(self):
+    def move_start_forward(self) -> None:
         hub.led(LedColor.Green)
         self.vm.start_move_direction("forward")
 
-    async def rotate_radar_async(self, direction: str, position: float):
+    async def rotate_radar_async(self, direction: str, position: float) -> None:
         await self.vm.run_motor_to_position("E", direction, position)
 
-    def get_color(self):
+    def get_color(self) -> int:
         return self.vm.get_color("C")
 
-    def get_proximity(self):
+    def get_proximity(self) -> float:
         return self.vm.get_proximity("D")
 
-    async def turn_async(self):
+    async def turn_async(self) -> None:
         await self.rotate_radar_async("counterclockwise", 270)
         yield 100
         left_distance = self.get_proximity()
@@ -112,7 +114,7 @@ class Robot:
 
         self.move_start_forward()
 
-    async def run(self):
+    async def run(self) -> None:
         self.vm.store.move_pair(("A", "B"))
         self.vm.store.move_speed(50)
 
@@ -136,13 +138,13 @@ class Robot:
             yield
 
 
-async def main(vm, stack):
+async def main(vm: VirtualMachineExt, stack) -> None:
     robot = Robot(vm)
     await robot.run()
     vm.stop()
 
 
-def setup(rpc, system, stop):
+def setup(rpc, system, stop) -> VirtualMachineExt:
     vm = VirtualMachineExt(rpc, system, stop)
     vm.register_on_start(None, main)
     return vm
