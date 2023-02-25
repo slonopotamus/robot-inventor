@@ -1,0 +1,17 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+root = true
+
+[*]
+end_of_line = native
+insert_final_newline = true
+
+[*.{json,yml}]
+charset = utf-8
+indent_size = 2
+indent_style = space
+
+[*.py]
+charset = utf-8
+indent_size = 4
+indent_style = space

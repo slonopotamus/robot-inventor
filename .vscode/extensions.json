@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "asciidoctor.asciidoctor-vscode",
+    "ms-python.python",
+    "PeterStaev.lego-spikeprime-mindstorms-vscode"
+  ]
+}
