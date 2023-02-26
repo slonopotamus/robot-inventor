@@ -1,3 +1,7 @@
 = LEGO Robot Inventor projects
 
-* link:explorer.py[Explorer]
+== Explorer
+
+https://www.onekitprojects.com/51515/explorer[Build] | link:explorer.py[Code]
+
+image:https://static.wixstatic.com/media/3e0c85_09a7714193954e738f85bc1146d958aa~mv2.jpg[]
