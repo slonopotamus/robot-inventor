@@ -39,7 +39,7 @@ class VirtualMachineExt(runtime.VirtualMachine):
             movement.from_direction(direction, self.store.move_speed()),
         )
 
-    def start_move_direction(self, direction: str) -> None:
+    def start_move(self, direction: str) -> None:
         movement.move_start(
             self, movement.from_direction(direction, self.store.move_speed())
         )
@@ -81,9 +81,9 @@ class Robot:
     def __init__(self, vm: VirtualMachineExt):
         self.vm = vm
 
-    def move_start_forward(self) -> None:
+    def start_move_forward(self) -> None:
         hub.led(LedColor.Green)
-        self.vm.start_move_direction("forward")
+        self.vm.start_move("forward")
 
     async def rotate_radar_async(self, direction: str, position: float) -> None:
         await self.vm.run_motor_to_position("E", direction, position)
@@ -110,14 +110,14 @@ class Robot:
             "counterclockwise" if left_distance > right_distance else "clockwise", 155
         )
 
-        self.move_start_forward()
+        self.start_move_forward()
 
     async def run(self) -> None:
         self.vm.store.move_pair(("A", "B"))
         self.vm.store.move_speed(50)
 
         await self.rotate_radar_async("shortest", 0)
-        self.move_start_forward()
+        self.start_move_forward()
 
         while True:
             if self.get_color() == LedColor.Azure:
