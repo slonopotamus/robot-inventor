@@ -28,10 +28,8 @@ class VirtualMachineExt(runtime.VirtualMachine):
         super().__init__(rpc, system, stop, None)
 
     async def move_cm_async(self, direction: str, cm: float) -> None:
-        await movement.move_degrees(
-            self,
-            (cm / self.store.move_calibration()) * 360,
-            movement.from_direction(direction, self.store.move_speed()),
+        await self.move_degrees_async(
+            direction, cm / self.store.move_calibration() * 360
         )
 
     async def move_degrees_async(self, direction: str, degrees: float) -> None:
